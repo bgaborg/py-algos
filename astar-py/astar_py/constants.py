@@ -13,7 +13,7 @@ GREY = (128, 128, 128)
 TURQUOISE = (64, 224, 208)
 
 WIDTH = 900
-ROWS = 50
+ROWS = 30
 
 class NodeState(Enum):
     OPEN = GREEN

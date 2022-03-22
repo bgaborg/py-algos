@@ -1,4 +1,6 @@
 import json
+import random
+from typing import Tuple
 import pygame
 from astar_py.constants import *
 
@@ -14,10 +16,6 @@ class Node:
 		self.walls = {
 		}
 		self.neighbors = {
-			WallPlacement.NORTH: None,
-			WallPlacement.SOUTH: None,
-			WallPlacement.EAST: None,
-			WallPlacement.WEST: None
 		}
 
 
@@ -70,7 +68,6 @@ class Node:
 			pygame.draw.line(win, BLACK, (self.x + self.width, self.y), (self.x + self.width, self.y + self.width))
 		if WallPlacement.WEST in self.walls:
 			pygame.draw.line(win, BLACK, (self.x, self.y), (self.x, self.y + self.width))
-
 
 	def update_neighbors(self, grid):
 		self.neighbors = {

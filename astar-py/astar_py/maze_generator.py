@@ -2,6 +2,8 @@
 from abc import ABC, abstractmethod
 from collections import defaultdict, deque
 from curses import qiflush
+import json
+import pickle
 from queue import Queue
 import random
 import time
@@ -32,11 +34,10 @@ class Maze:
         maze_generator: MazeGenerator = KruskalsGenerator(self)
         return maze_generator.generate_maze(draw)
 
-    def empty(self):
+    def remove_neighbours(self):
         for row in self.grid:
             for node in row:
-                node.reset()
-
+                node.remove_all_neighbors()
 
 class MazeGenerator(ABC):
     def __init__(self, maze: Maze):
@@ -64,13 +65,11 @@ class KruskalsGenerator(MazeGenerator):
         sets.make_set(all_nodes)
 
         walls = deque()
-        for row in grid:
-            for node in row:
-                node.reset()
-                node.add_walls()
-                node.update_neighbors(grid)
-                walls.append(Wall(node, WallPlacement.EAST))
-                walls.append(Wall(node, WallPlacement.SOUTH))
+        for node in all_nodes:
+            node.reset()
+            node.add_walls()
+            node.update_neighbors(grid)
+            walls.extend([Wall(node, w) for w in node.walls])
         random.shuffle(walls)
 
         start_node = all_nodes[0]
@@ -79,7 +78,7 @@ class KruskalsGenerator(MazeGenerator):
         end_node.make_end()
 
         print("Generating maze...")
-        while sets.find(start_node) != sets.find(end_node):
+        while len(walls) > 0:
             wall: Wall = walls.pop()
             other_node = wall.from_node.neighbors[wall.position]
             if other_node and sets.find(wall.from_node) != sets.find(other_node):
@@ -89,8 +88,6 @@ class KruskalsGenerator(MazeGenerator):
 
         return (start_node, end_node)
 
-
-# A class to represent a disjoint set
 class DisjointSet:
     parent = {}
 
@@ -107,5 +104,5 @@ class DisjointSet:
         self.parent[x] = y
 
 if __name__ == '__main__':
-    maze = Maze(rows = 10, width = 20)
+    maze = Maze(rows = 20, width = 20)
     maze.generate(None)
