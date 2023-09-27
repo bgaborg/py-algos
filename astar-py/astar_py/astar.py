@@ -178,5 +178,5 @@ logger.setLevel(logging.DEBUG)
 logger.addHandler(ch)
 
 
-if __name__ == '__main__':
+def run():
 	Display(WIDTH).run()
